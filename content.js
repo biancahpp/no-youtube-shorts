@@ -8,6 +8,8 @@
   const RICH_SECTION_TAG = 'ytd-rich-section-renderer';
   /** Homepage Shorts carousel: ytd-rich-shelf-renderer with is-shorts attribute. */
   const RICH_SHELF_IS_SHORTS = 'ytd-rich-shelf-renderer[is-shorts]';
+  /** Loader placeholder that can be left after removing the Shorts shelf (watch-page sidebar). */
+  const CONTINUATION_ITEM_TAG = 'ytd-continuation-item-renderer';
 
   /**
    * True if this element is (or contains) the homepage Shorts section.
@@ -36,6 +38,19 @@
     if (!container || !container.querySelectorAll) return;
     const shelves = Array.from(container.querySelectorAll(REEL_SHELF_TAG));
     shelves.forEach(function (el) { el.remove(); });
+  }
+
+  /**
+   * Remove ytd-continuation-item-renderer (loader with spinner) only when it has an element
+   * after it—i.e. more content has loaded and the loader is the leftover Shorts placeholder.
+   * Avoids touching continuation items used for comments or still loading.
+   */
+  function removeOrphanedShortsLoadersIn(container) {
+    if (!container || !container.querySelectorAll) return;
+    const items = Array.from(container.querySelectorAll(CONTINUATION_ITEM_TAG));
+    items.forEach(function (el) {
+      if (el.nextElementSibling) el.remove();
+    });
   }
 
   /**
@@ -81,6 +96,8 @@
     // Always remove reel shelves from the whole document (sidebar beside video). When the observer
     // gets a small added node, the shelf is an ancestor so we must search body.
     removeReelShelvesIn(document.body);
+    // Remove continuation-item loader when content has loaded after it (next sibling present).
+    removeOrphanedShortsLoadersIn(document.body);
     const thumbnails = Array.from(container.querySelectorAll(SHORTS_THUMBNAIL_SELECTOR));
     thumbnails.forEach(removeShort);
   }
