@@ -60,6 +60,8 @@ The extension is built for **Manifest V3** (Chromium extension format), so it wo
 
 You can confirm this by reading the source: the extension consists of `manifest.json` (no broad permissions) and `content.js` (DOM-only logic, no network requests).
 
+**Privacy policy:** [View our privacy policy](https://your-username.github.io/no-youtube-shorts/).
+
 ---
 
 ## How it works
@@ -79,3 +81,4 @@ No API keys, no external services, no data collection—just DOM manipulation to
 ## License
 
 Use and modify as you like. No warranty; use at your own risk.
+

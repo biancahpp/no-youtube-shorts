@@ -45,14 +45,26 @@
   }
 
   /**
+   * True if this continuation item is part of the comment/replies section. We must never
+   * remove these or expanding replies breaks.
+   */
+  function isCommentContinuation(el) {
+    return el.hasAttribute('is-comments-section') ||
+      el.classList.contains('replies-continuation') ||
+      el.closest('ytd-comment-replies-renderer') ||
+      el.closest('ytd-comments');
+  }
+
+  /**
    * Remove ytd-continuation-item-renderer (loader with spinner) only when it has an element
    * after it—i.e. more content has loaded and the loader is the leftover Shorts placeholder.
-   * Avoids touching continuation items used for comments or still loading.
+   * Never remove continuation items that are part of comments or replies.
    */
   function removeOrphanedShortsLoadersIn(container) {
     if (!container || !container.querySelectorAll) return;
     const items = Array.from(container.querySelectorAll(CONTINUATION_ITEM_TAG));
     items.forEach(function (el) {
+      if (isCommentContinuation(el)) return;
       if (el.nextElementSibling) el.remove();
     });
   }
